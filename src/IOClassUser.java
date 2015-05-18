@@ -5,12 +5,18 @@ import java.util.Scanner;
 
 import javax.swing.JOptionPane;
 
-
-public class IOClassUser {
+ 
+// to do
+// to rework all class to CQRS pattern !!!!!!!!!
+public class IOClassUser 
+{
 
 	Scanner user_input = new Scanner( System.in ); // class to read input from keyboard
+	
 	String FileName = new String(); // initializing new object of String
+	
 	File UserFile = null; // null`ing UserFile because we dont have a filename.
+	
 	public IOClassUser() 
 	{
 		System.out.println("Project started");
@@ -20,7 +26,12 @@ public class IOClassUser {
 		System.out.println();
 		
 	}
-	public void DeleteLastCreatedFile() // delete() doesnt throw IOException ! notice it!
+	public void RenameLastUsedFile() // to do
+	{
+		
+	}
+	
+	public boolean DeleteLastCreatedFile() // delete() doesnt throw IOException ! notice it!
 	{
 		this.UserFile = new File(this.FileName);
 		if(this.UserFile.exists()) // if file exists
@@ -30,15 +41,18 @@ public class IOClassUser {
 				System.out.println(this.UserFile + " deleted from the root directory.");
 				this.FileName = null;
 				this.UserFile = null;
+				return true;
 			} 
 			else 
 			{
 				System.out.println("Unable to delete this file!"); // if this.UserFile.delete() returns false
+				return false;
 			}
 		}
 		else 
 		{
 			System.out.println("File doesnt exist"); // if this.UserFile.exists() returns false)
+			return false;
 		}
 	}
 	
@@ -55,6 +69,8 @@ public class IOClassUser {
 		return FileForDelete.delete(); // return boolean result of function fileForDelete.delete();
 		
 	}
+	
+	
 	public void CreateFile() throws IOException
 	{	
 		//String fileSeparator = System.getProperty("file.separator"); 
@@ -93,6 +109,8 @@ public class IOClassUser {
          
         
     }
+	
+	
 	public void ReadFileName()
 	{
 		this.FileName = this.user_input.nextLine(); // reading filename from keyboard
