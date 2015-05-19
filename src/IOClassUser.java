@@ -6,7 +6,14 @@ import java.util.Scanner;
 
 // CQRS pattern
 
-
+ // to do :
+// open file
+// copy file
+// read file line by line
+// write to file
+// download file from url
+// write object to file
+// compress file via java
 public class IOClassUser 
 {
 
