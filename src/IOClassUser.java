@@ -89,16 +89,19 @@ public class IOClassUser
 	{
 	    try
 	    {
+	    	String[] cls = new String[] {"cmd.exe", "/c", "cls"};
+	    	String[] clear = new String [] {"cmd.exe", "/c", "clear"};
+	    	Runtime.getRuntime().exec(cls); 
 	         String os = System.getProperty("os.name");
 
 	        if (os.contains("Windows"))
 	        {
 	        
-	            Runtime.getRuntime().exec("cls");
+	        	Runtime.getRuntime().exec(cls); 
 	        }
 	        else
 	        {
-	            Runtime.getRuntime().exec("clear");
+	            Runtime.getRuntime().exec(clear);
 	        }
 	    }
 	    catch ( Exception e)
