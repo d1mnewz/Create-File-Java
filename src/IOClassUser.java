@@ -90,7 +90,7 @@ public class IOClassUser
 	    try
 	    {
 	    	String[] cls = new String[] {"cmd.exe", "/c", "cls"};
-	    	String[] clear = new String [] {"cmd.exe", "/c", "clear"};
+	    	
 	    	Runtime.getRuntime().exec(cls); 
 	         String os = System.getProperty("os.name");
 
@@ -101,7 +101,7 @@ public class IOClassUser
 	        }
 	        else
 	        {
-	            Runtime.getRuntime().exec(clear);
+	            Runtime.getRuntime().exec("clear");
 	        }
 	    }
 	    catch ( Exception e)
