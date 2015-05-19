@@ -6,6 +6,7 @@ import java.util.Scanner;
 
 // CQRS pattern
 
+
 public class IOClassUser 
 {
 
@@ -14,8 +15,6 @@ public class IOClassUser
 	String FileName = new String(); // initializing new object of String
 	
 	File UserFile = null; // null`ing UserFile because we dont have a filename.
-	
-	//public StatusResult res = new StatusResult();
 	
 	public IOClassUser() 
 	{
@@ -26,50 +25,67 @@ public class IOClassUser
 		System.out.println();
 		
 	}
-	
-	public void Dispatcher(String choice) // to do
-	{
+
+	public void Dispatcher(String choice)
+	{ 
+		// dispatcher -> handlers
 		switch(choice)
 		{
 		case "1":
+			// all of functions return StatusResult value that has method ShowResult() 
+			// so we can use it from result of this.CreateFile("").ShowResult();
 			try 
 			{
-				this.CreateFile(this.user_input.nextLine()).ShowResult();
+				this.CreateFile(this.user_input.nextLine()).ShowResult(); // create file throws IOException
+				this.user_input.nextLine();
 			}
+			
+			// this.user_input.nextLine() is kinda "press any key to continue"
+			
 			catch (IOException e) 
 			{
 				StatusResult obj = new StatusResult("invalid input of filename in create-branch.");
 				obj.ShowResult();
-				
 			}
 			break;
+			
 		case "2":
-			this.DeleteFileByName(this.user_input.nextLine()).ShowResult();
+			this.DeleteFileByName(this.user_input.nextLine()).ShowResult(); 
+			this.user_input.nextLine();
 			break;
+			
 		case "3":
 			this.DeleteLastCreatedFile().ShowResult();
+			this.user_input.nextLine();
 			break;
+			
 		case "4":
-			String from = this.user_input.nextLine();
-			String to = this.user_input.nextLine();
-			this.RenameFile(from, to).ShowResult();
+			String From = this.user_input.nextLine(); // read FromFileName
+			String To = this.user_input.nextLine(); // read ToFileName
+			this.RenameFile(From, To).ShowResult();
+			this.user_input.nextLine();
 			break;
+			
 		case "5":
-			this.RenameLastUsedFile(this.user_input.nextLine());
+			this.RenameLastUsedFile(this.user_input.nextLine()).ShowResult();
+			this.user_input.nextLine();
 			break;
+			
 		case "0":
-			System.exit(0);
+			System.exit(0); // exit app without error code
 			break;
-			default:
-				StatusResult obj1 = new StatusResult("Invalid input in menu");
-				obj1.ShowResult();
+			
+		default:
+				StatusResult obj1 = new StatusResult("Invalid input in menu"); 
+				obj1.ShowResult(); // if any of cases wasnt used
+				this.user_input.nextLine();
 				break;
 		
 		}
 		
 	}
 	
-	public  void clearConsole()
+	public  void clearConsole() // clearing console for windows and unix-like systems
 	{
 	    try
 	    {
@@ -77,6 +93,7 @@ public class IOClassUser
 
 	        if (os.contains("Windows"))
 	        {
+	        
 	            Runtime.getRuntime().exec("cls");
 	        }
 	        else
@@ -93,7 +110,9 @@ public class IOClassUser
 	public void Menu()
 	{
 		String choice = new String();
-		this.clearConsole();
+		while(choice != "0") 
+		{
+		this.clearConsole(); // clear console before printing menu
 		System.out.println("\tJava IO interface\t");
 		System.out.println("1. Create new file.");
 		System.out.println("2. Delete file by name.");
@@ -101,14 +120,15 @@ public class IOClassUser
 		System.out.println("4. Rename file by name.");
 		System.out.println("5. Rename last created file.");
 		System.out.println("0. Exit.");
-		choice = this.user_input.nextLine();
+		choice = this.user_input.nextLine(); // read choice from keyboard
 		this.Dispatcher(choice);
-		
+		}
 	}
 	
 	public StatusResult RenameLastUsedFile(String filename) // to do
 	{
-		if(this.UserFile != null && this.UserFile.exists() && !(new File(filename).exists()))
+		// if lastCreatedFile exists & filename that we want to assign to old file is not already in use
+		if(this.UserFile != null && this.UserFile.exists() && !(new File(filename).exists())) // 
 		{
 			this.UserFile.renameTo(new File(filename));
 			return new StatusResult();
@@ -119,6 +139,8 @@ public class IOClassUser
 	
 	public StatusResult RenameFile(String filenameFrom, String filenameTo) // to do
 	{
+		// if file with such name exists in directory &
+		// filename that we want to assign to old file is not already in use
 		if(new File(filenameFrom).exists() & !(new File(filenameTo).exists()))
 		{
 			new File(filenameFrom).renameTo(new File(filenameTo));
@@ -132,11 +154,9 @@ public class IOClassUser
 		this.UserFile = new File(this.FileName);
 		if(this.UserFile.exists()) // if file exists
 		{
-			if(this.UserFile.delete())
+			if(this.UserFile.delete()) // if true
 			{
 				System.out.println(this.UserFile + " deleted from the root directory.");
-				this.FileName = null;
-				this.UserFile = null;
 				return new StatusResult();
 			} 
 			else 
@@ -155,7 +175,7 @@ public class IOClassUser
 	public StatusResult DeleteFileByName(String filenameToDelete) // delete() does not throw IOException ! notice it!
 	{
 		File FileForDelete = new File(filenameToDelete); // initializing fileForDelete
-		if(FileForDelete.delete())
+		if(FileForDelete.delete()) // if true
 		{
 			return new StatusResult(); // return boolean result of function fileForDelete.delete();
 		}
@@ -205,10 +225,10 @@ public class IOClassUser
 
 	public static void main(String [] args)
 	{
-		
+		// create an instance of IOClassUser
 		IOClassUser obj = new IOClassUser();
-		
-		obj.Menu();
+		// and launch program
+		obj.Menu(); 
 		
 	}
 

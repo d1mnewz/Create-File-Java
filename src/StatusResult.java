@@ -18,7 +18,7 @@ public class StatusResult
 	}
 	public void ShowResult()
 	{
-		System.out.println("Result of an operation is" + this.Result);
+		System.out.println("Result of an operation is " + this.Result);
 		if(this.Result == false)
 		{
 			System.out.println("Error Message : " + this.ErrorCode);
