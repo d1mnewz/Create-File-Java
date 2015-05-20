@@ -1,5 +1,11 @@
+import java.awt.Desktop;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.time.LocalDateTime;
 import java.util.Scanner;
 
@@ -7,8 +13,8 @@ import java.util.Scanner;
 // CQRS pattern
 
  // to do :
-// open file
-// copy file
+// open file * done
+// copy file 
 // read file line by line
 // write to file
 // download file from url
@@ -32,6 +38,7 @@ public class IOClassUser
 		System.out.println();
 		
 	}
+	
 
 	public void Dispatcher(String choice)
 	{ 
@@ -67,9 +74,9 @@ public class IOClassUser
 			break;
 			
 		case "4":
-			String From = this.user_input.nextLine(); // read FromFileName
-			String To = this.user_input.nextLine(); // read ToFileName
-			this.RenameFile(From, To).ShowResult();
+			String FromRead = this.user_input.nextLine(); // read FromFileName
+			String ToRead = this.user_input.nextLine(); // read ToFileName
+			this.RenameFile(FromRead, ToRead).ShowResult();
 			this.user_input.nextLine();
 			break;
 			
@@ -77,6 +84,23 @@ public class IOClassUser
 			this.RenameLastUsedFile(this.user_input.nextLine()).ShowResult();
 			this.user_input.nextLine();
 			break;
+			
+		case "6":
+			this.OpenFileByName(this.user_input.nextLine()).ShowResult();
+			this.user_input.nextLine();
+			break;
+		case "7":
+			String FromCopy = this.user_input.nextLine(); // Copy FromFileName
+			String ToCopy = this.user_input.nextLine(); // Copy ToFileName
+			if(new File(FromCopy).exists())
+			{
+				if(new File(ToCopy).exists())
+				{
+				this.CopyFileByName(FromCopy, ToCopy).ShowResult();
+				}
+				else new StatusResult("File to copy to doesnt exist.").ShowResult();
+			}
+			else new StatusResult("File to copy from doesnt exist.").ShowResult();
 			
 		case "0":
 			System.exit(0); // exit app without error code
@@ -92,6 +116,87 @@ public class IOClassUser
 		
 	}
 	
+	
+	public StatusResult CopyFileByName(String from, String to)
+	{
+
+		    InputStream is = null;
+		    OutputStream os = null;
+		    try 
+		    {
+		        try 
+		        {
+					is = new FileInputStream(from);
+				} catch (FileNotFoundException e)
+		        {
+					return new StatusResult("File to copy from not found.");
+				}
+		        try
+		        {
+					os = new FileOutputStream(to);
+				} catch (FileNotFoundException e) 
+		        {
+					return new StatusResult("File to copy in not found.");
+				}
+		        byte[] buffer = new byte[1024];
+		        int length;
+		        try 
+		        {
+					while ((length = is.read(buffer)) > 0) 
+					{
+					    os.write(buffer, 0, length);
+					}
+				} catch (IOException e) 
+		        {
+					return new StatusResult("Unable to copy file");
+				}
+		    }
+		    finally 
+		    {
+		        try
+		        {
+					is.close();
+				} catch (IOException e) 
+		        {
+					System.out.println("Input stream wasn`t closed");
+				}
+		        try 
+		        {
+					os.close();
+				} catch (IOException e) 
+		        {
+					System.out.println("Output stream wasn`t closed");
+				}
+		    }
+		    return new StatusResult();
+		}
+	
+	
+	public StatusResult OpenFileByName(String name)
+	{
+		if (Desktop.isDesktopSupported())
+		{
+		    try 
+		    {
+		    	if(new File(name).exists())
+		    	{
+		    		Desktop.getDesktop().edit(new File(name));
+		    	}
+		    	else 
+		    		{
+		    			return new StatusResult("File that you want to open doesnt exist.");
+		    		}
+			} 
+		    catch (IOException e)
+		    {
+				return new StatusResult("Can`t open file.");
+			};
+		} else 
+		{
+		    return new StatusResult("Desktop is not supported");
+		}
+		return new StatusResult();
+	}
 	public  void clearConsole() // clearing console for windows and unix-like systems
 	{
 	    try
@@ -129,6 +234,8 @@ public class IOClassUser
 		System.out.println("3. Delete last created file.");
 		System.out.println("4. Rename file by name.");
 		System.out.println("5. Rename last created file.");
+		System.out.println("6. Open file by name in notepad.");
+		System.out.println("7. Copy file by name");
 		System.out.println("0. Exit.");
 		choice = this.user_input.nextLine(); // read choice from keyboard
 		this.Dispatcher(choice);
