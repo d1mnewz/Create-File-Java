@@ -107,25 +107,24 @@ public class IOClassUser
 			String dataWrite = new String(this.user_input.nextLine());
 			System.out.print("FileName: ");
 			String ToWrite = new String(this.user_input.nextLine());
-			if(!dataWrite.equals(null) || !dataWrite.isEmpty())
+			if(!dataWrite.equals(null) || !dataWrite.isEmpty() )
 			{
-				if(new File(ToWrite).exists())
+				if(dataWrite == "") // TO FIX
 				{
-					this.ClearAndWriteToFileByName(ToWrite, dataWrite).ShowResult();
+					System.out.println("WTF");
 				}
-				else 
-				{
-					new StatusResult("File with such name doesn`t exist.").ShowResult();
-				}
+				this.ClearAndWriteByName(ToWrite, dataWrite).ShowResult();
+			
 			}
-			else new StatusResult("empty data").ShowResult();
+			else new StatusResult("empty data").ShowResult(); // never gets it
+			break;
 		case "0":
 			System.exit(0); // exit app without error code
 			break;
 			
 		default:
 				StatusResult obj1 = new StatusResult("Invalid input in menu"); 
-				obj1.ShowResult(); // if any of cases wasnt used
+				obj1.ShowResult(); // if any of cases wasn`t used
 				this.user_input.nextLine();
 				break;
 		
@@ -133,14 +132,47 @@ public class IOClassUser
 		
 	}
 	
-	
-	public StatusResult ClearAndWriteToFileByName(String name, String data) // usinf fileWriter
+	public StatusResult AppendTextByName(String name, String data) // to test
 	{
-	        FileWriter fr = null;
+		        File file = new File(name);
+		        FileWriter fr = null;
+		        try 
+		        {
+		            //Below constructor argument decides whether to append or override
+		            fr = new FileWriter(file,true);
+		            fr.write(data);
+		             
+		        } 
+		        catch (IOException e)
+		        {
+		        	return new StatusResult("Cannot write to file");
+		        }
+		        finally
+		        {
+		            try 
+		            {
+		                fr.close();
+		            }
+		            catch (IOException e)
+		            {
+		               System.out.println("Unable to close fileWriter.");
+		            }
+		        }
+		        return new StatusResult();
+	}
+	
+	public StatusResult ClearAndWriteByName(String name, String data) // using fileWriter
+	{
+			if(!new File(name).exists()) 
+	        {
+	        	return new StatusResult("File doesn`t exist."); // if file doesnt exist we tell user about it
+	        }
+	        FileWriter fr = null; // initializing fr 
+	       
 	        try 
 	        {
-	            fr = new FileWriter(new File(name));
-	        	fr.write(data);
+	            fr = new FileWriter(new File(name)); // using FileWriter constructor with anonymous file instance
+	        	fr.write(data); // write data 
 
 	        }
 	        catch(IOException e)
@@ -152,13 +184,13 @@ public class IOClassUser
 	            
 	            try 
 	            {
-	                fr.close();
+	                fr.close(); // we must to close filewriter stream
 	            } catch (IOException e)
 	            {
 	               System.out.println("Unable to close file writer.");
 	            }
 	        }
-	        return new StatusResult();
+	        return new StatusResult(); // if everything was ok
 	    }
 		
 	
@@ -166,13 +198,13 @@ public class IOClassUser
 	public StatusResult CopyFileByName(String from, String to)
 	{
 
-		    InputStream is = null;
+		    InputStream is = null; // nulling both streams
 		    OutputStream os = null;
 		    try 
 		    {
 		        try 
 		        {
-					is = new FileInputStream(from);
+					is = new FileInputStream(from); // initializing inputstream
 				} catch (FileNotFoundException e)
 		        {
 					return new StatusResult("File to copy from not found.");
@@ -180,25 +212,26 @@ public class IOClassUser
 		        try
 		        {
 					os = new FileOutputStream(to);
-				} catch (FileNotFoundException e) 
+				} 
+		        catch (FileNotFoundException e) 
 		        {
 					return new StatusResult("File to copy in not found.");
 				}
-		        byte[] buffer = new byte[1024];
-		        int length;
+		        byte[] buffer = new byte[1024]; // thats buffer that we use to copy something
+		        int length = 0;
 		        try 
 		        {
 					while ((length = is.read(buffer)) > 0) 
 					{
-					    os.write(buffer, 0, length);
+					    os.write(buffer, 0, length); // write
 					}
 				} catch (IOException e) 
 		        {
-					return new StatusResult("Unable to copy file");
+					return new StatusResult("Unable to copy file"); 
 				}
 		    }
 		    finally 
-		    {
+		    { //always close all that you can close !
 		        try
 		        {
 					is.close();
@@ -220,13 +253,13 @@ public class IOClassUser
 	
 	public StatusResult OpenFileByName(String name)
 	{
-		if (Desktop.isDesktopSupported())
+		if (Desktop.isDesktopSupported()) //tests if desktop exists
 		{
 		    try 
 		    {
 		    	if(new File(name).exists())
 		    	{
-		    		Desktop.getDesktop().edit(new File(name));
+		    		Desktop.getDesktop().edit(new File(name)); // if desktop and file are available we open file
 		    	}
 		    	else 
 		    		{
