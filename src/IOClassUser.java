@@ -3,6 +3,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -13,10 +14,9 @@ import java.util.Scanner;
 // CQRS pattern
 
  // to do :
-// open file * done
-// copy file 
-// read file line by line
-// write to file
+// open file 				* done
+// copy file 				* done 
+// write to file			* 1/2
 // download file from url
 // write object to file
 // compress file via java
@@ -101,7 +101,24 @@ public class IOClassUser
 				else new StatusResult("File to copy to doesnt exist.").ShowResult();
 			}
 			else new StatusResult("File to copy from doesnt exist.").ShowResult();
-			
+			break;
+		case "8":
+			System.out.print("Data: ");
+			String dataWrite = new String(this.user_input.nextLine());
+			System.out.print("FileName: ");
+			String ToWrite = new String(this.user_input.nextLine());
+			if(!dataWrite.equals(null) || !dataWrite.isEmpty())
+			{
+				if(new File(ToWrite).exists())
+				{
+					this.ClearAndWriteToFileByName(ToWrite, dataWrite).ShowResult();
+				}
+				else 
+				{
+					new StatusResult("File with such name doesn`t exist.").ShowResult();
+				}
+			}
+			else new StatusResult("empty data").ShowResult();
 		case "0":
 			System.exit(0); // exit app without error code
 			break;
@@ -115,6 +132,35 @@ public class IOClassUser
 		}
 		
 	}
+	
+	
+	public StatusResult ClearAndWriteToFileByName(String name, String data) // usinf fileWriter
+	{
+	        FileWriter fr = null;
+	        try 
+	        {
+	            fr = new FileWriter(new File(name));
+	        	fr.write(data);
+
+	        }
+	        catch(IOException e)
+	        {
+	        	return new StatusResult("Cannot write to file.");
+	        }
+	        finally
+	        {
+	            
+	            try 
+	            {
+	                fr.close();
+	            } catch (IOException e)
+	            {
+	               System.out.println("Unable to close file writer.");
+	            }
+	        }
+	        return new StatusResult();
+	    }
+		
 	
 	
 	public StatusResult CopyFileByName(String from, String to)
@@ -235,7 +281,8 @@ public class IOClassUser
 		System.out.println("4. Rename file by name.");
 		System.out.println("5. Rename last created file.");
 		System.out.println("6. Open file by name in notepad.");
-		System.out.println("7. Copy file by name");
+		System.out.println("7. Copy file by name.");
+		System.out.println("8. Clear & Write to file by name.");
 		System.out.println("0. Exit.");
 		choice = this.user_input.nextLine(); // read choice from keyboard
 		this.Dispatcher(choice);
