@@ -9,6 +9,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.LocalDateTime;
 import java.util.Scanner;
+import java.util.*;
+import java.lang.Object;
+import java.io.Writer;
 
 
 // CQRS pattern
@@ -16,8 +19,8 @@ import java.util.Scanner;
  // to do :
 // open file 				* done
 // copy file 				* done 
-// write to file			* 1/2
-// download file from url
+// write to file			* done
+// download file from url	* 
 // write object to file
 // compress file via java
 public class IOClassUser 
@@ -92,39 +95,49 @@ public class IOClassUser
 		case "7":
 			String FromCopy = this.user_input.nextLine(); // Copy FromFileName
 			String ToCopy = this.user_input.nextLine(); // Copy ToFileName
-			if(new File(FromCopy).exists())
-			{
-				if(new File(ToCopy).exists())
-				{
-				this.CopyFileByName(FromCopy, ToCopy).ShowResult();
-				}
-				else new StatusResult("File to copy to doesnt exist.").ShowResult();
-			}
-			else new StatusResult("File to copy from doesnt exist.").ShowResult();
+			this.CopyFileByName(FromCopy, ToCopy).ShowResult();
+			this.user_input.nextLine();
 			break;
 		case "8":
 			System.out.print("Data: ");
-			String dataWrite = new String(this.user_input.nextLine());
+			String DataWrite = new String(this.user_input.nextLine());
 			System.out.print("FileName: ");
 			String ToWrite = new String(this.user_input.nextLine());
-			if(!dataWrite.equals(null) || !dataWrite.isEmpty() )
+			if(!DataWrite.equals(null) || !DataWrite.isEmpty() )
 			{
-				if(dataWrite == "") // TO FIX
-				{
-					System.out.println("WTF");
-				}
-				this.ClearAndWriteByName(ToWrite, dataWrite).ShowResult();
-			
+				this.ClearAndWriteByName(ToWrite, DataWrite).ShowResult();	
+				
 			}
-			else new StatusResult("empty data").ShowResult(); // never gets it
+			else 
+				{
+					new StatusResult("empty data").ShowResult(); // never gets it
+				}
+			this.user_input.nextLine();
+			break;
+		case "9":
+			System.out.print("Data: ");
+			String DataAppend = new String(this.user_input.nextLine());
+			System.out.print("FileName: ");
+			String ToAppend = new String(this.user_input.nextLine());
+			if(!DataAppend.equals(null))
+			{
+				this.AppendTextByName(ToAppend, DataAppend).ShowResult();
+			}
+			else 
+			{
+				new StatusResult("empty data").ShowResult();
+			}
+			this.user_input.nextLine();
+			break;
+		case "a":
+			
 			break;
 		case "0":
 			System.exit(0); // exit app without error code
 			break;
 			
 		default:
-				StatusResult obj1 = new StatusResult("Invalid input in menu"); 
-				obj1.ShowResult(); // if any of cases wasn`t used
+				new StatusResult("Invalid input in menu").ShowResult(); // if any of cases wasn`t used
 				this.user_input.nextLine();
 				break;
 		
@@ -132,33 +145,53 @@ public class IOClassUser
 		
 	}
 	
-	public StatusResult AppendTextByName(String name, String data) // to test
+	public StatusResult ObjectToJSON(Object obj)
+	{
+		//Gson gson = new Gson();
+//		String json = gson.toJson(obj);
+		
+		// Emp fetched from database
+//		ObjectMapper mapper = new ObjectMapper();
+//		mapper.writeValue(new File("c:\\user.json"), user);
+
+		 JSONWriter serializer = new JSONWriter().
+		 
+	        //return serializer.serialize( p );
+			return new StatusResult();
+	}
+	public StatusResult AppendTextByName(String name, String data) 
 	{
 		        File file = new File(name);
-		        FileWriter fr = null;
-		        try 
+		        if(file.exists())
 		        {
-		            //Below constructor argument decides whether to append or override
-		            fr = new FileWriter(file,true);
-		            fr.write(data);
-		             
-		        } 
-		        catch (IOException e)
-		        {
-		        	return new StatusResult("Cannot write to file");
+			        FileWriter fr = null;
+			        try 
+			        {
+			            //Below constructor argument decides whether to append or override
+			            fr = new FileWriter(file,true);
+			            fr.append(data);
+			             
+			        } 
+			        catch (IOException e)
+			        {
+			        	return new StatusResult("Cannot write to file");
+			        }
+			        finally
+			        {
+			            try 
+			            {
+			                fr.close();
+			            }
+			            catch (IOException e)
+			            {
+			               System.out.println("Unable to close fileWriter.");
+			            }
+			        }
+			        return new StatusResult();
 		        }
-		        finally
-		        {
-		            try 
-		            {
-		                fr.close();
-		            }
-		            catch (IOException e)
-		            {
-		               System.out.println("Unable to close fileWriter.");
-		            }
-		        }
-		        return new StatusResult();
+		        else return new StatusResult("File doesn`t exist.");
+		        
+		       
 	}
 	
 	public StatusResult ClearAndWriteByName(String name, String data) // using fileWriter
@@ -205,7 +238,8 @@ public class IOClassUser
 		        try 
 		        {
 					is = new FileInputStream(from); // initializing inputstream
-				} catch (FileNotFoundException e)
+				} 
+		        catch (FileNotFoundException e)
 		        {
 					return new StatusResult("File to copy from not found.");
 				}
@@ -316,6 +350,7 @@ public class IOClassUser
 		System.out.println("6. Open file by name in notepad.");
 		System.out.println("7. Copy file by name.");
 		System.out.println("8. Clear & Write to file by name.");
+		System.out.println("9. Append text to file by name.");
 		System.out.println("0. Exit.");
 		choice = this.user_input.nextLine(); // read choice from keyboard
 		this.Dispatcher(choice);
