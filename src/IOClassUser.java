@@ -20,9 +20,8 @@ import java.io.Writer;
 // open file 				* done
 // copy file 				* done 
 // write to file			* done
-// download file from url	* 
-// write object to file
-// compress file via java
+// write object to file   !!!!!!!!
+// compress file via java !!!!!!!!
 public class IOClassUser 
 {
 
@@ -145,7 +144,7 @@ public class IOClassUser
 		
 	}
 	
-	public StatusResult ObjectToJSON(Object obj)
+	public StatusResult ObjectToJSON(Object obj) // to do !!!!
 	{
 		//Gson gson = new Gson();
 //		String json = gson.toJson(obj);
@@ -154,7 +153,7 @@ public class IOClassUser
 //		ObjectMapper mapper = new ObjectMapper();
 //		mapper.writeValue(new File("c:\\user.json"), user);
 
-		 JSONWriter serializer = new JSONWriter().
+		 
 		 
 	        //return serializer.serialize( p );
 			return new StatusResult();
