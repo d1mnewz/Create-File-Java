@@ -9,19 +9,18 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.LocalDateTime;
 import java.util.Scanner;
-import java.util.*;
+
 import java.lang.Object;
-import java.io.Writer;
-
-
+import java.util.zip.ZipOutputStream;
+import java.util.zip.ZipEntry;
 // CQRS pattern
 
  // to do :
 // open file 				* done
 // copy file 				* done 
 // write to file			* done
-// write object to file   !!!!!!!!
-// compress file via java !!!!!!!!
+
+// compress file via java   * done .zip
 public class IOClassUser 
 {
 
@@ -128,8 +127,9 @@ public class IOClassUser
 			}
 			this.user_input.nextLine();
 			break;
-		case "a":
-			
+		case "10":
+			this.FileToZipByName(this.user_input.nextLine()).ShowResult();
+			this.user_input.nextLine();
 			break;
 		case "0":
 			System.exit(0); // exit app without error code
@@ -143,21 +143,49 @@ public class IOClassUser
 		}
 		
 	}
-	
-	public StatusResult ObjectToJSON(Object obj) // to do !!!!
-	{
-		//Gson gson = new Gson();
-//		String json = gson.toJson(obj);
-		
-		// Emp fetched from database
-//		ObjectMapper mapper = new ObjectMapper();
-//		mapper.writeValue(new File("c:\\user.json"), user);
 
-		 
-		 
-	        //return serializer.serialize( p );
+	public StatusResult FileToZipByName(String filename)
+	{
+		if((new File(filename)).exists())
+		{
+			this.zipSingleFile((new File(filename)), filename + ".zip");
 			return new StatusResult();
+		}
+		else return new StatusResult("Error while zipping file");
 	}
+	 private void zipSingleFile(File file, String zipFileName)
+	 {
+	        try 
+	        {
+	            //create ZipOutputStream to write to the zip file
+	            FileOutputStream fos = new FileOutputStream(zipFileName);
+	            ZipOutputStream zos = new ZipOutputStream(fos);
+	            //add a new Zip Entry to the ZipOutputStream
+	            ZipEntry ze = new ZipEntry(file.getName());
+	            zos.putNextEntry(ze);
+	            //read the file and write to ZipOutputStream
+	            FileInputStream fis = new FileInputStream(file);
+	            byte[] buffer = new byte[1024];
+	            int len;
+	            while ((len = fis.read(buffer)) > 0) {
+	                zos.write(buffer, 0, len);
+	            }
+	             
+	            //Close the zip entry to write to zip file
+	            zos.closeEntry();
+	            //Close resources
+	            zos.close();
+	            fis.close();
+	            fos.close();
+	           // System.out.println(file.getCanonicalPath()+" is zipped to "+zipFileName);
+	             
+	        }
+	        catch (IOException e)
+	        {
+	            System.out.println("Something happend on the way to zip file.");
+	        }
+	 
+	    }
 	public StatusResult AppendTextByName(String name, String data) 
 	{
 		        File file = new File(name);
@@ -350,6 +378,7 @@ public class IOClassUser
 		System.out.println("7. Copy file by name.");
 		System.out.println("8. Clear & Write to file by name.");
 		System.out.println("9. Append text to file by name.");
+		System.out.println("10. Zip file by name.");
 		System.out.println("0. Exit.");
 		choice = this.user_input.nextLine(); // read choice from keyboard
 		this.Dispatcher(choice);
